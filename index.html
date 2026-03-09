@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TH 1949 — Tommy Hilfiger Eyewear</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition"></div>
+
+  <!-- Full-viewport scroll canvas + edge vignettes -->
+  <canvas id="glasses-canvas"></canvas>
+  <div class="cv-top"></div>
+  <div class="cv-bottom"></div>
+  <div class="cv-right"></div>
+
+  <!-- Fixed Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">TOMMY HILFIGER</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link is-active">Product</a>
+        <a href="view3d.html" class="nav-link">3D View</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <span class="hero-label">001 / EYEWEAR</span>
+      <h1 class="hero-heading">
+        <span class="hero-word">TH</span>
+        <span class="hero-word accent">1949</span>
+      </h1>
+      <p class="hero-tagline"><em>Define Your Vision</em></p>
+    </div>
+
+    <div class="scroll-indicator">
+      <span class="scroll-text">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCROLL CONTAINER — 800vh, drives right-side frame animation
+  ============================================================ -->
+  <div id="scroll-container">
+
+    <!-- ── FEATURES / SPECS ─────────────────────────────────── -->
+    <section id="features">
+      <div class="section-header" data-reveal="fade-up">
+        <span class="section-label">002 / SPECIFICATIONS</span>
+        <h2 class="section-heading">Engineered<br>Precision</h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" data-reveal="fade-up" data-delay="0">
+          <div class="feature-num">01</div>
+          <div class="feature-icon">
+            <svg width="36" height="28" viewBox="0 0 36 28" fill="none">
+              <rect x="1" y="6" width="13" height="16" rx="6.5" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="22" y="6" width="13" height="16" rx="6.5" stroke="currentColor" stroke-width="1.4"/>
+              <line x1="14" y1="14" x2="22" y2="14" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Premium Acetate</h3>
+          <p class="feature-body">Bio-acetate frame from plant-based materials. Lightweight, hypoallergenic, built to last.</p>
+        </div>
+
+        <div class="feature-card" data-reveal="fade-up" data-delay="1">
+          <div class="feature-num">02</div>
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.4"/>
+              <circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2.5"/>
+              <circle cx="16" cy="16" r="2" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">UV400 Lenses</h3>
+          <p class="feature-body">Full-spectrum UV protection with anti-reflective multi-coating. Crystal-clear optical precision.</p>
+        </div>
+
+        <div class="feature-card" data-reveal="fade-up" data-delay="2">
+          <div class="feature-num">03</div>
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect x="12" y="6" width="8" height="20" rx="1.5" stroke="#E8B400" stroke-width="1.4"/>
+              <line x1="12" y1="16" x2="4" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="20" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Spring Hinges</h3>
+          <p class="feature-body">Gold-tone spring hinges with flexible fit. The signature yellow detail — TH's mark of distinction.</p>
+        </div>
+
+        <div class="feature-card" data-reveal="fade-up" data-delay="3">
+          <div class="feature-num">04</div>
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M6 16 Q16 8 26 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="16" cy="16" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+              <line x1="16" y1="6" x2="16" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="16" y1="21" x2="16" y2="26" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">28g Titanium</h3>
+          <p class="feature-body">Titanium-reinforced temples. Barely perceptible weight for all-day wearing comfort.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── LENS TECHNOLOGY ───────────────────────────────────── -->
+    <section id="lens">
+      <div class="section-header">
+        <span class="section-label">003 / LENS TECHNOLOGY</span>
+        <h2 class="section-heading">Precision<br>Optics</h2>
+      </div>
+
+      <div class="lens-list">
+
+        <div class="lens-item">
+          <div class="lens-item-num">01</div>
+          <div class="lens-item-body">
+            <div class="lens-item-tag">PHOTOCHROMIC</div>
+            <h3 class="lens-item-title">Light-Adaptive Technology</h3>
+            <p class="lens-item-text">Lenses that automatically darken in sunlight and return crystal clear indoors. Blocks 100% of UVA/UVB rays. Transitions in 30–60 seconds — effortlessly adapting to your environment without a second thought.</p>
+            <span class="lens-item-stat">100% UVA/UVB Protection</span>
+          </div>
+        </div>
+
+        <div class="lens-item">
+          <div class="lens-item-num">02</div>
+          <div class="lens-item-body">
+            <div class="lens-item-tag">BLUE SHIELD</div>
+            <h3 class="lens-item-title">Digital Eye Defence</h3>
+            <p class="lens-item-text">Specialized optical coatings engineered to filter harmful high-energy blue-violet light from digital screens. Reduces eye strain, enhances contrast, and includes anti-reflective and scratch-resistant properties.</p>
+            <span class="lens-item-stat">Anti-Reflective + Scratch Resistant</span>
+          </div>
+        </div>
+
+        <div class="lens-item">
+          <div class="lens-item-num">03</div>
+          <div class="lens-item-body">
+            <div class="lens-item-tag">ANTI-REFLECTIVE</div>
+            <h3 class="lens-item-title">Clarity. Redefined.</h3>
+            <p class="lens-item-text">A precision multi-layer coating that eliminates reflections from both surfaces of the lens — allowing up to 99.5% of light through for sharper, clearer vision. Minimizes night halos and reduces digital fatigue.</p>
+            <span class="lens-item-stat">99.5% Light Transmission</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── COMPONENTS / ANATOMY ──────────────────────────────── -->
+    <section id="components">
+      <div class="section-header" data-reveal="fade-up">
+        <span class="section-label">004 / ANATOMY</span>
+        <h2 class="section-heading">The Architecture</h2>
+        <p class="section-sub">Every component, precisely considered.</p>
+      </div>
+
+      <div class="components-stage">
+
+        <div class="part" id="part-left-temple" data-reveal-part>
+          <div class="part-shape temple-shape"></div>
+          <span class="part-label">Left Temple</span>
+        </div>
+
+        <div class="part" id="part-left-hinge" data-reveal-part>
+          <div class="part-shape hinge-shape"></div>
+          <span class="part-label">Hinge · Gold</span>
+        </div>
+
+        <div class="part" id="part-left-lens" data-reveal-part>
+          <div class="part-shape lens-shape">
+            <div class="lens-inner"></div>
+          </div>
+          <span class="part-label">Left Frame</span>
+        </div>
+
+        <div class="part" id="part-bridge" data-reveal-part>
+          <div class="part-shape bridge-shape"></div>
+          <span class="part-label">Bridge</span>
+        </div>
+
+        <div class="part" id="part-right-lens" data-reveal-part>
+          <div class="part-shape lens-shape">
+            <div class="lens-inner"></div>
+          </div>
+          <span class="part-label">Right Frame</span>
+        </div>
+
+        <div class="part" id="part-right-hinge" data-reveal-part>
+          <div class="part-shape hinge-shape"></div>
+          <span class="part-label">Hinge · Gold</span>
+        </div>
+
+        <div class="part" id="part-right-temple" data-reveal-part>
+          <div class="part-shape temple-shape"></div>
+          <span class="part-label">Right Temple</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── DETAIL / B-ROLL ───────────────────────────────────── -->
+    <section id="broll">
+      <div class="broll-inner">
+        <span class="section-label">005 / DETAIL</span>
+        <h2 class="broll-heading">Worn With<br>Intention</h2>
+        <p class="broll-body">The TH 1949 is more than eyewear. It is the intersection of American heritage and contemporary precision — designed for those who understand that the smallest details carry the greatest meaning.</p>
+
+        <div class="broll-specs">
+          <div class="spec-row">
+            <span class="spec-key">Lens Width</span>
+            <span class="spec-divider"></span>
+            <span class="spec-val">52mm</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Bridge</span>
+            <span class="spec-divider"></span>
+            <span class="spec-val">18mm</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Temple</span>
+            <span class="spec-divider"></span>
+            <span class="spec-val">140mm</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Colorways</span>
+            <span class="spec-divider"></span>
+            <span class="spec-val">3</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA ───────────────────────────────────────────────── -->
+    <section id="cta">
+      <div class="cta-inner">
+        <span class="section-label" data-reveal="fade-up">006 / EXPERIENCE</span>
+        <h2 class="cta-heading" data-reveal="clip-reveal">
+          Explore<br><em>in 3D</em>
+        </h2>
+        <p class="cta-sub" data-reveal="fade-up">Rotate. Inspect. Understand every angle.<br>Control with your hand.</p>
+        <a href="view3d.html" class="cta-button cta-link" data-reveal="fade-up">
+          <span class="btn-text">Enter 3D View</span>
+          <span class="btn-arrow">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M3 9h12M9 3l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </section>
+
+  </div><!-- /#scroll-container -->
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

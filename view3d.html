@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TH 1949 — 3D View</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/view3d.css">
+</head>
+<body>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition"></div>
+
+  <!-- WebGL Canvas -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Hidden webcam feed -->
+  <video id="webcam" autoplay playsinline muted></video>
+
+  <!-- Header -->
+  <header class="viewer-header">
+    <a href="index.html" class="back-link" id="back-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M12 8H4M8 12L4 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>TH 1949</span>
+    </a>
+    <span class="viewer-title">3D EXPLORER</span>
+    <div class="camera-status" id="camera-status">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-text" id="status-text">Requesting camera…</span>
+    </div>
+  </header>
+
+  <!-- Gesture instructions overlay -->
+  <div class="gesture-hint" id="gesture-hint">
+    <div class="hint-icon">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <path d="M20 38V18a2 2 0 0 1 4 0v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M24 22a2 2 0 0 1 4 0v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M28 24a2 2 0 0 1 4 0v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M32 27a2 2 0 0 1 4 0v5c0 5-4 10-10 10h-2a8 8 0 0 1-8-8v-8l-2-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="hint-lines">
+      <p class="hint-main">Move your hand to rotate</p>
+      <p class="hint-sub">Pinch fingers → dismantle &nbsp;·&nbsp; Open hand → reassemble</p>
+    </div>
+  </div>
+
+  <!-- Camera permission denied fallback -->
+  <div class="cam-blocked" id="cam-blocked" style="display:none;">
+    <div class="cam-blocked-inner">
+      <p class="cam-blocked-title">Camera access denied</p>
+      <p class="cam-blocked-sub">Using mouse fallback — move your cursor to rotate the glasses.</p>
+      <p class="cam-blocked-sub">Click and hold to trigger dismantle.</p>
+    </div>
+  </div>
+
+  <!-- State label (assembled / dismantled) -->
+  <div class="state-label" id="state-label">Assembled</div>
+
+  <!-- Pinch indicator -->
+  <div class="pinch-ring" id="pinch-ring"></div>
+
+  <!-- GSAP (non-module, must load before view3d.js module) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+
+  <!-- MediaPipe Hands -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+  <!-- Three.js scene (ES module) -->
+  <script type="module" src="js/view3d.js"></script>
+</body>
+</html>

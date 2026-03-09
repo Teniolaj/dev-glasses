@@ -1,0 +1,276 @@
+/* ============================================================
+   view3d.css — Page 2: Interactive 3D Viewer
+============================================================ */
+:root {
+  --black:      #050505;
+  --gold:       #E8B400;
+  --white:      #F2F2F0;
+  --grey-light: #999999;
+  --grey-faint: #333333;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Outfit', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page Transition Overlay ── */
+#page-transition {
+  position: fixed;
+  inset: 0;
+  background: var(--black);
+  z-index: 9999;
+  clip-path: circle(150% at 50% 50%);
+  pointer-events: none;
+}
+
+/* ── WebGL Canvas ── */
+#three-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* ── Hidden webcam feed ── */
+#webcam {
+  position: fixed;
+  bottom: -9999px;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Header ── */
+.viewer-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: 72px;
+  padding: 0 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.85), transparent);
+  pointer-events: none;
+}
+
+.viewer-header > * { pointer-events: all; }
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--grey-light);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.back-link:hover { color: var(--white); }
+
+.viewer-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: var(--grey-faint);
+  user-select: none;
+}
+
+.camera-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--grey-faint);
+  transition: background 0.5s;
+}
+
+.status-dot.active {
+  background: #22cc66;
+  box-shadow: 0 0 8px rgba(34, 204, 102, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-dot.fallback { background: var(--gold); }
+.status-dot.error { background: #cc4444; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-text {
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--grey-light);
+}
+
+/* ── Gesture Hint Overlay ── */
+.gesture-hint {
+  position: fixed;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.hint-icon {
+  color: var(--gold);
+  opacity: 0.7;
+  animation: floatHand 2.5s ease-in-out infinite;
+}
+
+@keyframes floatHand {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.hint-main {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--white);
+  letter-spacing: 0.05em;
+}
+
+.hint-sub {
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: var(--grey-light);
+  text-transform: uppercase;
+}
+
+/* ── Camera blocked fallback ── */
+.cam-blocked {
+  position: fixed;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  text-align: center;
+  pointer-events: none;
+  border: 1px solid rgba(232,180,0,0.2);
+  padding: 1.5rem 2.5rem;
+  background: rgba(5,5,5,0.7);
+  backdrop-filter: blur(10px);
+}
+
+.cam-blocked-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.cam-blocked-sub {
+  font-size: 0.75rem;
+  color: var(--grey-light);
+  line-height: 1.7;
+}
+
+/* ── State Label (Assembled / Dismantled) ── */
+.state-label {
+  position: fixed;
+  top: 50%;
+  right: 5vw;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: center;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--grey-faint);
+  pointer-events: none;
+  transition: color 0.5s;
+  z-index: 150;
+}
+
+.state-label.dismantled { color: var(--gold); }
+
+/* ── Pinch Ring Indicator ── */
+.pinch-ring {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 200;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pinch-ring.visible {
+  opacity: 1;
+  animation: pinchPulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes pinchPulse {
+  from { transform: translate(-50%, -50%) scale(0.8); }
+  to   { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* ── Corner decorations ── */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+}
+
+body::before {
+  top: 5vh; left: 5vw;
+  width: 30px; height: 30px;
+  border-top: 1px solid rgba(232,180,0,0.25);
+  border-left: 1px solid rgba(232,180,0,0.25);
+}
+
+body::after {
+  bottom: 5vh; right: 5vw;
+  width: 30px; height: 30px;
+  border-bottom: 1px solid rgba(232,180,0,0.25);
+  border-right: 1px solid rgba(232,180,0,0.25);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .state-label { display: none; }
+  .hint-main { font-size: 0.9rem; }
+  .hint-sub { font-size: 0.6rem; }
+}
