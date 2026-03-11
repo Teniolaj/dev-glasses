@@ -49,8 +49,8 @@ function renderFrame(index) {
   const drawW  = img.naturalWidth  * scale;
   const drawH  = img.naturalHeight * scale;
   ctx.clearRect(0, 0, W, H);
-  // Shift glasses to the right side of the viewport (20% rightward from center)
-  const xShift = W * 0.20;
+  // Shift glasses right on desktop; center on mobile
+  const xShift = window.innerWidth < 768 ? W * 0.02 : W * 0.20;
   ctx.drawImage(img, (W - drawW) / 2 + xShift, (H - drawH) / 2, drawW, drawH);
   currentFrame = i;
 }
@@ -138,15 +138,31 @@ const SECTION_CENTERS = {
 function positionSections() {
   const containerEl = document.getElementById('scroll-container');
   if (!containerEl) return;
-  // Always use 800vh as the positioning basis so resize doesn't drift
-  const containerH = window.innerHeight * 8;
 
-  Object.entries(SECTION_CENTERS).forEach(([id, pct]) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const centerPx = containerH * (pct / 100);
-    el.style.top = `${centerPx - el.offsetHeight / 2}px`;
-  });
+  const isMobile = window.innerWidth < 768;
+
+  if (isMobile) {
+    // Gap-based: stack sections using their actual rendered heights
+    const gap       = window.innerHeight * 0.12;   // 12vh breathing room between sections
+    const startTop  = window.innerHeight * 0.28;   // first section starts 28vh into container
+    const ids = ['features', 'lens', 'components', 'broll', 'cta'];
+    let cursor = startTop;
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.top = `${cursor}px`;
+      cursor += el.offsetHeight + gap;
+    });
+  } else {
+    // Desktop: fixed % centres relative to 800vh container
+    const containerH = window.innerHeight * 8;
+    Object.entries(SECTION_CENTERS).forEach(([id, pct]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const centerPx = containerH * (pct / 100);
+      el.style.top = `${centerPx - el.offsetHeight / 2}px`;
+    });
+  }
 
   // Trim container to end just after the CTA section — no dead space
   const ctaEl = document.getElementById('cta');
