@@ -76,39 +76,79 @@ const fillLight = new THREE.PointLight(0x6688bb, 20, 25);
 fillLight.position.set(0, -5, 4);
 scene.add(fillLight);
 
+// ── Canvas dot/grid texture for navy temple arms ─────────────
+function createDotTexture() {
+  const size = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const cx = c.getContext('2d');
+  cx.fillStyle = '#1a2340';
+  cx.fillRect(0, 0, size, size);
+  cx.fillStyle = '#232f55';
+  const sp = 9;
+  for (let x = sp / 2; x < size; x += sp) {
+    for (let y = sp / 2; y < size; y += sp) {
+      cx.beginPath();
+      cx.arc(x, y, 1.5, 0, Math.PI * 2);
+      cx.fill();
+    }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(5, 1);
+  return tex;
+}
+
+// ── Extra fill light so model is clearly visible ──────────────
+const modelFill = new THREE.DirectionalLight(0xffffff, 0.9);
+modelFill.position.set(0, 2, 8);
+scene.add(modelFill);
+
 // ── Materials ─────────────────────────────────────────────────
-const frameMat = new THREE.MeshStandardMaterial({
-  color: 0xc8c8c8,
-  metalness: 0.85,
-  roughness: 0.15,
-  envMapIntensity: 1.0
+// Matte frosted olive-grey acetate — TH1949 frame colour
+const frameMat = new THREE.MeshPhysicalMaterial({
+  color: 0x6a7a6e,        // muted olive-grey, not blue
+  roughness: 0.52,
+  metalness: 0.0,
+  clearcoat: 0.35,
+  clearcoatRoughness: 0.3,
+  thickness: 0.3,
+  transmission: 0.05,     // barely translucent edge — solid acetate feel
+  ior: 1.49,
 });
 
+// Dark navy temple — fine dot grid texture
 const darkFrameMat = new THREE.MeshStandardMaterial({
-  color: 0x1a1a1a,
-  metalness: 0.7,
-  roughness: 0.3
+  color: 0x1a2340,
+  roughness: 0.75,
+  metalness: 0.05,
+  map: createDotTexture(),
 });
 
-const lensMat = new THREE.MeshStandardMaterial({
-  color: 0x8caac8,
+// Clear optical-glass lens — prescription glasses, NOT sunglasses
+const lensMat = new THREE.MeshPhysicalMaterial({
+  color: 0xd0e0e8,        // barely-tinted near-white
   transparent: true,
-  opacity: 0.28,
-  metalness: 0.05,
+  opacity: 0.08,           // nearly invisible
   roughness: 0.0,
+  metalness: 0.0,
+  transmission: 0.92,
+  ior: 1.5,
+  reflectivity: 0.5,
   side: THREE.DoubleSide,
   depthWrite: false
 });
 
+// Gold — hinges, nose pads, temple tips
 const hingeMat = new THREE.MeshStandardMaterial({
   color: 0xE8B400,
-  metalness: 0.85,
-  roughness: 0.15,
-  emissive: 0x331a00,
-  emissiveIntensity: 0.4
+  metalness: 0.82,
+  roughness: 0.12,
+  emissive: 0x3a2800,
+  emissiveIntensity: 0.3
 });
 
-// ── Rounded-rectangle lens frame using ShapeGeometry + Extrude ─
+// ── Shape builders ────────────────────────────────────────────
 function createRoundedRectShape(w, h, r) {
   const shape = new THREE.Shape();
   shape.moveTo(-w / 2 + r, -h / 2);
@@ -130,23 +170,25 @@ function createLensRimGeo(w, h, r, thickness, depth) {
   return new THREE.ExtrudeGeometry(outer, {
     depth,
     bevelEnabled: true,
-    bevelThickness: 0.012,
-    bevelSize: 0.012,
+    bevelThickness: 0.010,   // sharper edges = more realistic
+    bevelSize: 0.010,
     bevelSegments: 4
   });
 }
 
 function createLensFillGeo(w, h, r) {
   const shape = createRoundedRectShape(w - 0.14, h - 0.14, Math.max(0.01, r - 0.07));
-  return new THREE.ShapeGeometry(shape, 16);
+  return new THREE.ShapeGeometry(shape, 32);
 }
 
 // ── Build Glasses Pieces ──────────────────────────────────────
 const glassesGroup = new THREE.Group();
 scene.add(glassesGroup);
 
-const LW = 1.7, LH = 1.3, LR = 0.28, LT = 0.08, LD = 0.10;
-const GAP = 0.38; // gap between lenses (bridge width / 2)
+// TH1949 proportions: rectangular (W:H ≈ 1.47:1), smaller corner radius
+// Reduced overall scale so both lenses fit well in the camera FOV
+const LW = 1.30, LH = 0.88, LR = 0.13, LT = 0.075, LD = 0.10;
+const GAP = 0.26; // nose bridge half-gap
 
 // Left lens rim
 const leftRimGeo  = createLensRimGeo(LW, LH, LR, LT, LD);
@@ -158,7 +200,7 @@ const rightRimGeo = createLensRimGeo(LW, LH, LR, LT, LD);
 const rightRim    = new THREE.Mesh(rightRimGeo, frameMat);
 rightRim.position.set(LW / 2 + GAP, 0, -LD / 2);
 
-// Left lens fill (glass)
+// Left lens fill — clear optical glass
 const leftLensFill  = new THREE.Mesh(createLensFillGeo(LW, LH, LR), lensMat);
 leftLensFill.position.set(-(LW / 2 + GAP), 0, 0);
 
@@ -166,50 +208,84 @@ leftLensFill.position.set(-(LW / 2 + GAP), 0, 0);
 const rightLensFill = new THREE.Mesh(createLensFillGeo(LW, LH, LR), lensMat);
 rightLensFill.position.set(LW / 2 + GAP, 0, 0);
 
-// Bridge — thin curved tube
+// Bridge — gentle downward-dipping arc (sits on nose, below lens centres)
 const bridgeCurve = new THREE.CatmullRomCurve3([
-  new THREE.Vector3(-(GAP - 0.05), -0.15, 0),
-  new THREE.Vector3(0, 0.08, 0),
-  new THREE.Vector3(GAP - 0.05, -0.15, 0)
+  new THREE.Vector3(-(GAP - 0.03), 0.04, 0),
+  new THREE.Vector3(0, -0.06, 0.015),
+  new THREE.Vector3(GAP - 0.03, 0.04, 0)
 ]);
-const bridgeGeo = new THREE.TubeGeometry(bridgeCurve, 20, 0.035, 8, false);
+const bridgeGeo = new THREE.TubeGeometry(bridgeCurve, 24, 0.028, 8, false);
 const bridge    = new THREE.Mesh(bridgeGeo, frameMat);
 
-// Left hinge — gold accent block
-const leftHingeGeo  = new THREE.BoxGeometry(0.09, 0.22, 0.12);
+// Left hinge — gold accent block at outer rim junction
+const leftHingeGeo  = new THREE.BoxGeometry(0.11, 0.22, 0.13);
 const leftHinge     = new THREE.Mesh(leftHingeGeo, hingeMat);
 leftHinge.position.set(-(LW + GAP), 0, 0);
 
 // Right hinge
-const rightHingeGeo = new THREE.BoxGeometry(0.09, 0.22, 0.12);
+const rightHingeGeo = new THREE.BoxGeometry(0.11, 0.22, 0.13);
 const rightHinge    = new THREE.Mesh(rightHingeGeo, hingeMat);
 rightHinge.position.set(LW + GAP, 0, 0);
 
-// Left temple — long arm
-const leftTempleGeo  = new THREE.BoxGeometry(2.2, 0.055, 0.06);
+// Left temple — navy arm angled slightly back from hinge
+const leftTempleGeo  = new THREE.BoxGeometry(2.2, 0.058, 0.062);
 const leftTemple     = new THREE.Mesh(leftTempleGeo, darkFrameMat);
 leftTemple.position.set(-(LW + GAP + 1.1 + 0.045), 0, -0.28);
 leftTemple.rotation.y = 0.15;
 
 // Right temple
-const rightTempleGeo = new THREE.BoxGeometry(2.2, 0.055, 0.06);
+const rightTempleGeo = new THREE.BoxGeometry(2.2, 0.058, 0.062);
 const rightTemple    = new THREE.Mesh(rightTempleGeo, darkFrameMat);
 rightTemple.position.set(LW + GAP + 1.1 + 0.045, 0, -0.28);
 rightTemple.rotation.y = -0.15;
 
-// Lens reflective shine strip (subtle)
+// ── Yellow rubber tip caps at far end of each temple ──────────
+const tipMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.06, roughness: 0.65 });
+const tipGeo = new THREE.BoxGeometry(0.13, 0.075, 0.075);
+const leftTip  = new THREE.Mesh(tipGeo, tipMat);
+leftTip.position.set(-(LW + GAP + 2.195 + 0.045), 0, -0.28);
+leftTip.rotation.y = 0.15;
+const rightTip = new THREE.Mesh(tipGeo, tipMat);
+rightTip.position.set(LW + GAP + 2.195 + 0.045, 0, -0.28);
+rightTip.rotation.y = -0.15;
+
+// ── Yellow nose pads at inner-lower corners of each lens ──────
+const padMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.05, roughness: 0.68 });
+const padGeo = new THREE.SphereGeometry(0.045, 8, 8);
+const leftPad  = new THREE.Mesh(padGeo, padMat);
+leftPad.position.set(-(GAP - 0.05), -LH * 0.34, 0.04);
+const rightPad = new THREE.Mesh(padGeo, padMat);
+rightPad.position.set(GAP - 0.05, -LH * 0.34, 0.04);
+
+// ── TH flag logo — small coloured block on each temple ────────
+const flagMat = new THREE.MeshStandardMaterial({ color: 0xcc1111, roughness: 0.45 });
+const flagGeo = new THREE.BoxGeometry(0.10, 0.055, 0.014);
+const leftFlag  = new THREE.Mesh(flagGeo, flagMat);
+leftFlag.position.set(-(LW + GAP + 0.24), 0, -0.21);
+leftFlag.rotation.y = 0.15;
+const rightFlag = new THREE.Mesh(flagGeo, flagMat);
+rightFlag.position.set(LW + GAP + 0.24, 0, -0.21);
+rightFlag.rotation.y = -0.15;
+
+// ── Subtle lens-surface highlight ────────────────────────────
 const shineMat = new THREE.MeshStandardMaterial({
-  color: 0xffffff, transparent: true, opacity: 0.04,
+  color: 0xffffff, transparent: true, opacity: 0.06,
   metalness: 1, roughness: 0, side: THREE.DoubleSide
 });
-const leftShine  = new THREE.Mesh(new THREE.PlaneGeometry(LW * 0.6, LH * 0.15), shineMat);
-const rightShine = new THREE.Mesh(new THREE.PlaneGeometry(LW * 0.6, LH * 0.15), shineMat);
-leftShine.position.set(-(LW / 2 + GAP), LH * 0.2, 0.01);
-rightShine.position.set(LW / 2 + GAP, LH * 0.2, 0.01);
+const leftShine  = new THREE.Mesh(new THREE.PlaneGeometry(LW * 0.48, LH * 0.10), shineMat);
+const rightShine = new THREE.Mesh(new THREE.PlaneGeometry(LW * 0.48, LH * 0.10), shineMat);
+leftShine.position.set(-(LW / 2 + GAP), LH * 0.20, 0.01);
+rightShine.position.set(LW / 2 + GAP, LH * 0.20, 0.01);
+
+// ── Warm gold accent light — catches frame edges ──────────────
+const goldAccentLight = new THREE.PointLight(0xc9a84c, 14, 20);
+goldAccentLight.position.set(2, 2.5, 4);
+scene.add(goldAccentLight);
 
 // Add all to group
 [leftRim, rightRim, leftLensFill, rightLensFill, bridge,
  leftHinge, rightHinge, leftTemple, rightTemple,
+ leftTip, rightTip, leftPad, rightPad, leftFlag, rightFlag,
  leftShine, rightShine].forEach(m => glassesGroup.add(m));
 
 // ── Piece registry (assembled → dismantled positions/rotations) ─
